@@ -1,8 +1,8 @@
 [package]
-name = "ForFab-Bot"
+name = "forfab_bot"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-serenity = "^0.10.9"
-tokio="^1.15.0"
+serenity = {version="^0.10.9",default-features = false, features = ["client", "gateway", "rustls_backend", "model", "unstable_discord_api"] }
+tokio={ version = "1.15.0", features = ["macros", "rt-multi-thread"] }
