@@ -1,0 +1,8 @@
+[package]
+name = "ForFab-Bot"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serenity = "^0.10.9"
+tokio="^1.15.0"
