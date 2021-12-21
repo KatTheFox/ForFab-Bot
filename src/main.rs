@@ -82,7 +82,7 @@ impl EventHandler for Handler {
                         options
                     {
                         // warn the user
-                        "Not yet implemented".to_string()
+                        format!("User {} now has {} warns", user.tag(), 0)
                     } else {
                         "Please provide a valid user".to_string()
                     }
@@ -99,11 +99,12 @@ impl EventHandler for Handler {
 
                     if let ApplicationCommandInteractionDataOptionValue::String(string) = options {
                         // translate the text
-                        "not yet implemented".to_string()
+                        string.to_string()
                     } else {
                         "Please provide a valid string".to_string()
                     }
                 }
+                _ => "Invalid command".to_string(),
             };
 
             if let Err(why) = command
