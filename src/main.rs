@@ -24,7 +24,7 @@ impl EventHandler for Handler {
         println!("{} is connected!", ready.user.name);
 
         let guild_id = GuildId(
-            env::var("GUILD_ID") // should be 773732824049123350
+            env::var("GUILD_ID") // should be  773732824049123350
                 .expect("Expected GUILD_ID in environment")
                 .parse()
                 .expect("GUILD_ID must be an integer"),
@@ -33,16 +33,25 @@ impl EventHandler for Handler {
         let commands = GuildId::set_application_commands(&guild_id, &ctx.http, |commands| {
             commands
                 .create_application_command(|command| {
-                    command.name("ping").description("A ping command")
+                    command
+                        .name("translate")
+                        .description("Translate text")
+                        .create_option(|option| {
+                            option
+                                .name("text")
+                                .description("the text to translate")
+                                .kind(ApplicationCommandOptionType::String)
+                                .required(true)
+                        })
                 })
                 .create_application_command(|command| {
                     command
-                        .name("id")
-                        .description("Get a user id")
+                        .name("warn")
+                        .description("Warn a user")
                         .create_option(|option| {
                             option
                                 .name("id")
-                                .description("The user to lookup")
+                                .description("The user to warn")
                                 .kind(ApplicationCommandOptionType::User)
                                 .required(true)
                         })
@@ -54,26 +63,12 @@ impl EventHandler for Handler {
             "I now have the following guild slash commands: {:#?}",
             commands
         );
-
-        let guild_command =
-            ApplicationCommand::create_global_application_command(&ctx.http, |command| {
-                command
-                    .name("wonderful_command")
-                    .description("An amazing command")
-            })
-            .await;
-
-        println!(
-            "I created the following global slash command: {:#?}",
-            guild_command
-        );
     }
 
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
         if let Interaction::ApplicationCommand(command) = interaction {
             let content = match command.data.name.as_str() {
-                "ping" => "Hey, I'm alive!".to_string(),
-                "id" => {
+                "warn" => {
                     let options = command
                         .data
                         .options
@@ -86,12 +81,29 @@ impl EventHandler for Handler {
                     if let ApplicationCommandInteractionDataOptionValue::User(user, _member) =
                         options
                     {
-                        format!("{}'s id is {}", user.tag(), user.id)
+                        // warn the user
+                        "Not yet implemented".to_string()
                     } else {
                         "Please provide a valid user".to_string()
                     }
                 }
-                _ => "not implemented :(".to_string(),
+                "translate" => {
+                    let options = command
+                        .data
+                        .options
+                        .get(0)
+                        .expect("Expected string option")
+                        .resolved
+                        .as_ref()
+                        .expect("Expected string object");
+
+                    if let ApplicationCommandInteractionDataOptionValue::String(string) = options {
+                        // translate the text
+                        "not yet implemented".to_string()
+                    } else {
+                        "Please provide a valid string".to_string()
+                    }
+                }
             };
 
             if let Err(why) = command
